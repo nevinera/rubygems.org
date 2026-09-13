@@ -82,6 +82,9 @@ en:
       ownership/role:
         owner: Owner
         maintainer: Maintainer
+      historical_ownership/role:
+        owner: Owner
+        maintainer: Maintainer
       membership/role:
         owner: Owner
         admin: Admin
@@ -706,6 +709,9 @@ en:
       added_by: ADDED BY
       action: ACTION
       role: ROLE
+      prior_owners_title: Prior Owners
+      prior_owner_start: START
+      prior_owner_end: END
       role_field: Role
       email_field: Email / Handle
       submit_button: Add Owner
@@ -859,6 +865,7 @@ en:
       not_using_mfa_warning_show: "* Some owners are not using multi-factor authentication (MFA). Click for the complete list."
       not_using_mfa_warning_hide: "* The following owners are not using multi-factor authentication (MFA). Click to hide."
       owners_header: Owners
+      prior_owner_removed_at: "Until %{date}"
       pushed_by: Pushed by
       using_mfa_info: "* All owners are using multi-factor authentication (MFA)."
       yanked_by: Yanked by

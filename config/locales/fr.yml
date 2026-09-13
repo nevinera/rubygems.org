@@ -82,6 +82,9 @@ fr:
       ownership/role:
         owner:
         maintainer:
+      historical_ownership/role:
+        owner:
+        maintainer:
       membership/role:
         owner:
         admin:
@@ -716,6 +719,9 @@ fr:
       added_by:
       action:
       role:
+      prior_owners_title:
+      prior_owner_start:
+      prior_owner_end:
       role_field:
       email_field:
       submit_button:
@@ -882,6 +888,7 @@ fr:
       not_using_mfa_warning_show:
       not_using_mfa_warning_hide:
       owners_header: Propriétaires
+      prior_owner_removed_at:
       pushed_by:
       using_mfa_info:
       yanked_by:
