@@ -78,6 +78,9 @@ zh-CN:
       ownership/role:
         owner:
         maintainer:
+      historical_ownership/role:
+        owner:
+        maintainer:
       membership/role:
         owner:
         admin:
@@ -733,6 +736,9 @@ zh-CN:
       added_by: 添加
       action: 行为
       role:
+      prior_owners_title:
+      prior_owner_start:
+      prior_owner_end:
       role_field:
       email_field: Email / Handle
       submit_button: 添加所有者
@@ -890,6 +896,7 @@ zh-CN:
       not_using_mfa_warning_show: "* 某些所有者当前还没有启用多因素验证（MFA）。请点击查看完整列表。"
       not_using_mfa_warning_hide: "* 以下所有者还未使用多因素验证（MFA）。点击隐藏。"
       owners_header: 所有者
+      prior_owner_removed_at:
       pushed_by: 推送者
       using_mfa_info: "* 全部所有者都已启用多因素验证（MFA）。"
       yanked_by: 撤回
