@@ -388,11 +388,11 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should "create api key" do
-      assert_not_nil @user.api_key
+      refute_nil @user.api_key
     end
 
     should "give user if specified name is user handle or email" do
-      assert_not_nil User.find_by_name(@user.handle)
+      refute_nil User.find_by_name(@user.handle)
       assert_equal User.find_by_name(@user.handle), User.find_by_name(@user.handle)
     end
 
@@ -894,6 +894,40 @@ class UserTest < ActiveSupport::TestCase
 
       assert_equal 2, @user.only_owner_gems.count
     end
+
+    should "include downloads and count from a gem the user no longer owns" do
+      former_rubygem = create(:rubygem, downloads: 500)
+      create(:version, rubygem: former_rubygem)
+      create(:ownership, user: @user, rubygem: former_rubygem).destroy
+
+      assert_equal 6500, @user.total_downloads_count
+      assert_equal 4, @user.total_rubygems_count
+    end
+
+    should "not double-count a gem with two closed stints" do
+      former_rubygem = create(:rubygem, downloads: 500)
+      create(:version, rubygem: former_rubygem)
+      create(:ownership, user: @user, rubygem: former_rubygem).destroy
+      create(:ownership, user: @user, rubygem: former_rubygem).destroy
+
+      assert_equal 6500, @user.total_downloads_count
+      assert_equal 4, @user.total_rubygems_count
+    end
+
+    should "not double-count a gem currently owned with an old closed stint" do
+      Ownership.find_by(user: @user, rubygem: @rubygems.first).destroy
+      create(:ownership, user: @user, rubygem: @rubygems.first)
+
+      assert_equal 6000, @user.total_downloads_count
+      assert_equal 3, @user.total_rubygems_count
+    end
+
+    should "exclude a formerly-owned gem with no versions from the count" do
+      former_rubygem = create(:rubygem)
+      create(:ownership, user: @user, rubygem: former_rubygem).destroy
+
+      assert_equal 3, @user.total_rubygems_count
+    end
   end
 
   context "yaml" do
@@ -972,7 +1006,7 @@ class UserTest < ActiveSupport::TestCase
     end
 
     should "set remember_token" do
-      assert_not_nil @user.remember_token
+      refute_nil @user.remember_token
     end
 
     should "set expiry of remember_token to two weeks from now" do
@@ -1179,6 +1213,15 @@ class UserTest < ActiveSupport::TestCase
 
     should "be false when the user does not have a blocked email" do
       refute_predicate @unblocked_user, :blocked?
+    end
+  end
+
+  context "#log_actor_attributes" do
+    should "omit account age when created_at is nil" do
+      user = create(:user)
+      user.created_at = nil
+
+      assert_equal({ gid: user.to_gid.to_s, type: "user" }, user.log_actor_attributes)
     end
   end
 

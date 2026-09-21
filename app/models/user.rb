@@ -146,6 +146,10 @@ class User < ApplicationRecord
     where(ownerships: { push_notifier: true })
   end
 
+  def self.push_notifiable_members
+    where(memberships: { push_notifier: true })
+  end
+
   def self.ownership_notifiable_owners
     where(ownerships: { owner_notifier: true })
   end
@@ -174,6 +178,14 @@ class User < ApplicationRecord
 
   def flipper_id
     "user:#{handle}"
+  end
+
+  # The `actor` block on request and gem.push.* log lines: GlobalIDs, not
+  # PII, and the same GlobalID Rack::Attack.api_key_owner_id throttles on.
+  def log_actor_attributes
+    attributes = { gid: to_gid.to_s, type: "user" }
+    attributes[:account_age_seconds] = (Time.current - created_at).to_i if created_at
+    attributes
   end
 
   def reset_api_key!
@@ -210,11 +222,11 @@ class User < ApplicationRecord
   end
 
   def total_downloads_count
-    rubygems.joins(:gem_download).sum(:count)
+    Rubygem.joins(:gem_download).where(id: historical_rubygem_ids).sum("gem_downloads.count")
   end
 
   def total_rubygems_count
-    rubygems.with_versions.count
+    Rubygem.with_versions.where(id: historical_rubygem_ids).count
   end
 
   def confirm_email!
@@ -321,6 +333,10 @@ class User < ApplicationRecord
 
   def keep_gems_published?
     @keep_gems_published == true
+  end
+
+  def historical_rubygem_ids
+    historical_ownerships.distinct.pluck(:rubygem_id)
   end
 
   def update_email
